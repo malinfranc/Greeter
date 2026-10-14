@@ -22,3 +22,12 @@ if(GREETER_BUILD_APPS)
  message(STATUS "Configuring Greeter with executables")
  add_subdirectory(apps)
 endif()
+
+# Tests
+# Options, to change with: cmake -DGREETER_BUILD_TESTS=OFFoption(GREETER_BUILD_TESTS "Compile tests" ON)
+option(GREETER_BUILD_TESTS "Compile apps" ON)
+if(GREETER_BUILD_TESTS)
+ message(STATUS "Configuring Greeter with tests")
+ enable_testing()
+ add_subdirectory(tests)
+endif()
