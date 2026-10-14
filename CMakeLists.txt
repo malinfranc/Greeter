@@ -31,3 +31,32 @@ if(GREETER_BUILD_TESTS)
  enable_testing()
  add_subdirectory(tests)
 endif()
+
+# ---- Installation: lets other projects use find_package(Greeter) ----
+include(CMakePackageConfigHelpers)
+# - in the install folder: find_package works after cmake --install
+install(EXPORT GreeterTargets
+ FILE GreeterTargets.cmake
+ DESTINATION cmake/
+)
+# GreeterConfig.cmake: the file read by find_package(Greeter)
+configure_package_config_file(
+ cmake/GreeterConfig.cmake.in
+ GreeterConfig.cmake
+ INSTALL_DESTINATION cmake/
+)
+install(
+ FILES ${PROJECT_BINARY_DIR}/GreeterConfig.cmake
+ DESTINATION cmake/
+)
+
+# ---- Packaging: cmake --build build --target package ----
+# The archive version is given on the command line, for example:
+# cmake -S . -B build -DCPACK_PACKAGE_VERSION=1.2.0
+if(WIN32)
+ set(CPACK_GENERATOR "ZIP")
+else()
+ set(CPACK_GENERATOR "TGZ")
+endif()
+# This must always be last!
+include(CPack)
