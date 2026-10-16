@@ -39,18 +39,25 @@ jobs:
         run: |
           cmake --install build --prefix install
           ./install/bin/greet Alice
+          
 docker:
-    name: CI - Image Docker
-    # On ne construit l'image que si les tests passent
-    needs: build-and-test
+    name: CD - Image Docker
     runs-on: ubuntu-latest
-
     steps:
       - name: Recuperer le code
         uses: actions/checkout@v4
 
-      - name: Construire l'image
-        run: docker build -t greeter .
+      - name: Se connecter au registre ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Lancer l'image
-        run: docker run --rm greeter
+      - name: Construire et publier l'image
+        run: |
+          # le nom de l'image doit etre en minuscules : ${VAR,,}
+          IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}:${GITHUB_REF_NAME}
+          docker build -t $IMAGE .
+          docker push $IMAGE
+
