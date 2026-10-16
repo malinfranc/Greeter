@@ -3,7 +3,11 @@
 # puis execute les memes commandes que vous tapez dans votre terminal.
 name: CI
 
-on: push
+on: 
+  push:
+     branches: [master]   # NOUVEAU
+  pull_request:          # NOUVEAU
+
 
 jobs:
   # ==========================================================================
