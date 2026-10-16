@@ -38,7 +38,7 @@ jobs:
         with:
           files: build/*.tar.gz
 
-#Docker update
+#Docker update v2
   docker:
       name: CD - Image Docker
       runs-on: ubuntu-latest
