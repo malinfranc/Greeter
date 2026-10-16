@@ -11,8 +11,12 @@ jobs:
   # ==========================================================================
 
   build-and-test:
-    name: CI - Compiler et tester
-    runs-on: ubuntu-latest
+    name: CI - Compiler et tester (${{ matrix.os }})   # MODIFIE : un nom par systeme
+    strategy:                                   # NOUVEAU
+      fail-fast: false                          # NOUVEAU : ne pas arreter Windows si Linux echoue
+      matrix:                                   # NOUVEAU
+        os: [ubuntu-latest, windows-latest]     # NOUVEAU
+    runs-on: ${{ matrix.os }}                   # MODIFIE
 
     steps:
       - name: Recuperer le code
