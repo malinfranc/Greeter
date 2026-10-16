@@ -15,8 +15,12 @@ jobs:
   # ==========================================================================
 
   build-and-test:
-    name: CI - Compiler et tester
-    runs-on: ubuntu-latest
+    name: CI - Compiler et tester (${{ matrix.os }})   # MODIFIE : un nom par systeme
+    strategy:                                   # NOUVEAU
+      fail-fast: false                          # NOUVEAU : ne pas arreter Windows si Linux echoue
+      matrix:                                   # NOUVEAU
+        os: [ubuntu-latest, windows-latest]     # NOUVEAU
+    runs-on: ${{ matrix.os }}                   # MODIFIE
 
     steps:
       - name: Recuperer le code
@@ -26,12 +30,27 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Compiler
-        run: cmake --build build
+        run: cmake --build build --config Release                   # MODIFIE
 
       - name: Tester (ctest)
-        run: ctest --test-dir build --output-on-failure
+        run: ctest --test-dir build -C Release --output-on-failure  # MODIFIE
 
       - name: Installer et lancer le programme
         run: |
           cmake --install build --prefix install
           ./install/bin/greet Alice
+docker:
+    name: CI - Image Docker
+    # On ne construit l'image que si les tests passent
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: Construire l'image
+        run: docker build -t greeter .
+
+      - name: Lancer l'image
+        run: docker run --rm greeter
