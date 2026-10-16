@@ -39,18 +39,21 @@ jobs:
         run: |
           cmake --install build --prefix install
           ./install/bin/greet Alice
-docker:
-    name: CI - Image Docker
-    # On ne construit l'image que si les tests passent
-    needs: build-and-test
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Recuperer le code
-        uses: actions/checkout@v4
+  docker:
+      name: CI - Image Docker
+      # On ne construit l'image que si les tests passent
+      needs: build-and-test
+      runs-on: ubuntu-latest
 
-      - name: Construire l'image
-        run: docker build -t greeter .
+      steps:
+        - name: Recuperer le code
+          uses: actions/checkout@v4
 
-      - name: Lancer l'image
-        run: docker run --rm greeter
+        - name: Construire l'image
+          run: docker build -t greeter .
+
+        - name: Lancer l'image
+          run: docker run --rm greeter
+
+
